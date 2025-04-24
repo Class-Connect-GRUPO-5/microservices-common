@@ -61,8 +61,8 @@ func (r *Repository[P]) Update(data any) models.APIResponse {
 	return models.NewSuccessDetails(200, "Updated", "Update successful", "repository.Update", "")
 }
 
-func (r *Repository[P]) Delete(id string) models.APIResponse {
-	query, args := r.parser.DeleteQuery(id)
+func (r *Repository[P]) Delete(filters map[string]any) models.APIResponse {
+	query, args := r.parser.DeleteQueryMany(filters)
 	tag, err := r.db.Exec(context.Background(), query, args...)
 	if err != nil {
 		return models.NewProblemDetails(500, "Delete Failed", err.Error(), "repository.Delete")
