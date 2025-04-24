@@ -32,6 +32,13 @@ func NewProblemDetails(status int, title, detail, instance string) ProblemDetail
 	}
 }
 
+func (p ProblemDetails) GetStatus() int   { return p.Status }
+func (p ProblemDetails) GetType() string  { return p.Type }
+func (p ProblemDetails) GetTitle() string { return p.Title }
+func (p ProblemDetails) GetInstance() string {
+	return p.Instance
+}
+
 func BadRequest(detail, instance string) ProblemDetails {
 	return NewProblemDetails(http.StatusBadRequest, "Invalid request", detail, instance)
 }
