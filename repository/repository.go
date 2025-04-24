@@ -73,18 +73,22 @@ func (r *Repository[P]) Delete(id string) models.APIResponse {
 	return models.NewSuccessDetails(200, "Deleted", "Delete successful", "repository.Delete", "")
 }
 
-func (r *Repository[P]) Get(id string) models.APIResponse {
-	query, args := r.parser.GetQuery(id)
-	row := r.db.QueryRow(context.Background(), query, args...)
+func (r *Repository[P]) GetByMany(filters map[string]any) models.APIResponse {
+	query, args := r.parser.GetQueryMany(filters)
+	rows, err := r.db.Query(context.Background(), query, args...)
+	if err != nil {
+		return models.NewProblemDetails(500, "GetByMany Failed", err.Error(), "repository.GetByMany")
+	}
+	defer rows.Close()
 
-	result, err := r.parser.ScanRow(row)
+	results, err := r.parser.ScanRows(rows)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return models.NewProblemDetails(404, "Not Found", "Resource not found", "repository.Get")
 		}
-		return models.NewProblemDetails(500, "Get Failed", err.Error(), "repository.Get")
+		return models.NewProblemDetails(500, "Scan Failed", err.Error(), "repository.GetByMany")
 	}
-	return models.NewSuccessDetails(200, "Fetched", "Resource fetched successfully", "repository.Get", result)
+	return models.NewSuccessDetails(200, "Fetched", "Resources fetched successfully", "repository.GetByMany", results)
 }
 
 func (r *Repository[P]) GetAll() models.APIResponse {

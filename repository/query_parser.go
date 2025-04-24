@@ -8,7 +8,7 @@ type QueryParser interface {
 	InsertQuery(data any) (string, []any)
 	UpdateQuery(data any) (string, []any)
 	DeleteQuery(id string) (string, []any)
-	GetQuery(id string) (string, []any)
+	GetQueryMany(filters map[string]any) (string, []any)
 	GetAllQuery() (string, []any)
 	ScanRow(row pgx.Row) (string, error)
 	ScanRows(rows pgx.Rows) (string, error)
