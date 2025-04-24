@@ -88,7 +88,13 @@ func (r *Repository[P]) GetByMany(filters map[string]any) models.APIResponse {
 		}
 		return models.NewProblemDetails(500, "Scan Failed", err.Error(), "repository.GetByMany")
 	}
-	return models.NewSuccessDetails(200, "Fetched", "Resources fetched successfully", "repository.GetByMany", results)
+
+	jsonStr, jsonErr := results.ToJSON()
+	if jsonErr != nil {
+		return models.NewProblemDetails(500, "Serialization Failed", jsonErr.Error(), "repository.GetByMany")
+	}
+
+	return models.NewSuccessDetails(200, "Fetched", "Resources fetched successfully", "repository.GetByMany", jsonStr)
 }
 
 func (r *Repository[P]) GetAll() models.APIResponse {
@@ -103,5 +109,11 @@ func (r *Repository[P]) GetAll() models.APIResponse {
 	if err != nil {
 		return models.NewProblemDetails(500, "Scan Failed", err.Error(), "repository.GetAll")
 	}
-	return models.NewSuccessDetails(200, "Fetched All", "Resources fetched successfully", "repository.GetAll", results)
+
+	jsonStr, jsonErr := results.ToJSON()
+	if jsonErr != nil {
+		return models.NewProblemDetails(500, "Serialization Failed", jsonErr.Error(), "repository.GetAll")
+	}
+
+	return models.NewSuccessDetails(200, "Fetched All", "Resources fetched successfully", "repository.GetAll", jsonStr)
 }
