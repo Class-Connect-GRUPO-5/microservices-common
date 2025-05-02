@@ -8,7 +8,6 @@ import (
 
 	"github.com/Class-Connect-GRUPO-5/microservices-common/logger"
 	"github.com/Class-Connect-GRUPO-5/microservices-common/utils"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
@@ -75,27 +74,4 @@ func ExtractUserJWT(c *gin.Context, jwtSecret string) (map[string]interface{}, e
 		return nil, err
 	}
 	return claims, nil
-}
-
-// GenerateAdminToken generates a JWT token for an admin user with the specified admin ID and role.
-// The token includes claims for the user ID, role, and an expiration time of 24 hours.
-// It uses the provided JWT secret to sign the token.
-//
-// Parameters:
-//   - adminID: A string representing the unique identifier of the admin user.
-//   - role: A string representing the role of the admin user.
-//   - jwtSecret: A string used as the secret key to sign the JWT token.
-//
-// Returns:
-//   - A string containing the signed JWT token.
-//   - An error if the token signing process fails.
-func GenerateAdminToken(adminID, role string, jwtSecret string) (string, error) {
-	claims := jwt.MapClaims{
-		"user_id": adminID,
-		"role":    role,
-		"exp":     time.Now().Add(time.Hour * 24).Unix(), // 24hs
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
 }

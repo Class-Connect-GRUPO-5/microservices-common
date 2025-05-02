@@ -39,12 +39,14 @@ func ParseJWT(tokenString string, jwtSecret string) (map[string]interface{}, err
 // Returns:
 //   - A string containing the signed JWT.
 //   - An error if there is an issue during the token generation or signing process.
-func GenerateJWT(userID string, role string, secretString string) (string, error) {
+func GenerateJWT(userID, role, email, userName, secretString string) (string, error) {
 	expirationTime := time.Now().Add(1 * time.Hour).Unix()
 	claims := jwt.MapClaims{
-		"user_id": userID,
-		"role":    role,
-		"exp":     expirationTime,
+		"user_id":   userID,
+		"role":      role,
+		"email":     email,
+		"user_name": userName,
+		"exp":       expirationTime,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
