@@ -26,13 +26,11 @@ func CheckPassword(hashedPwd string, plainPwd string) error {
 //     brute-force attacks.
 //   - Ensure that the returned error is handled appropriately to avoid security risks.
 func HashPassword(password string) (string, error) {
-	// Use bcrypt to hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		logger.Logger.Errorf("error while hashing the password: %s", err)
 		return "", err
 	}
 
-	// Return the hashed password
 	return string(hashedPassword), nil
 }
