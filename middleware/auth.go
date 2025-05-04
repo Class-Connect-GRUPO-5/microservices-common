@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -17,7 +18,7 @@ func RequireRole(jwtSecret string, isIDRequired bool, requiredRoles []string) gi
 		claims, err := ExtractUserJWT(c, jwtSecret)
 		if err != nil {
 			logger.Logger.Warnf("Error extracting JWT: %v", err)
-			utils.HandleSuccess(c, http.StatusUnauthorized, err.Error(), nil)
+			utils.HandleError(c, http.StatusUnauthorized, "Unauthorized", err.Error())
 			c.Abort()
 			return
 		}
@@ -25,12 +26,12 @@ func RequireRole(jwtSecret string, isIDRequired bool, requiredRoles []string) gi
 		exp, ok := claims["exp"].(float64)
 		if !ok {
 			logger.Logger.Warnf("Invalid token expiration format for user %v", claims["user_id"])
-			utils.HandleSuccess(c, http.StatusInternalServerError, "Invalid token expiration format.", nil)
+			utils.HandleError(c, http.StatusBadRequest, "Invalid token expiration format.", fmt.Errorf("invalid token expiration format").Error())
 			c.Abort()
 			return
 		} else if time.Now().Unix() > int64(exp) {
 			logger.Logger.Warnf("Token expired for user %v", claims["user_id"])
-			utils.HandleSuccess(c, http.StatusUnauthorized, "Token expired.", nil)
+			utils.HandleError(c, http.StatusUnauthorized, "Unauthorized", fmt.Errorf("token expired").Error())
 			c.Abort()
 			return
 		}
@@ -47,7 +48,7 @@ func RequireRole(jwtSecret string, isIDRequired bool, requiredRoles []string) gi
 
 		if !roleMatched {
 			logger.Logger.Warnf("Access denied for user %v with role %v", claims["user_id"], role)
-			utils.HandleSuccess(c, http.StatusForbidden, "Access denied.", nil)
+			utils.HandleError(c, http.StatusUnauthorized, "Unauthorized", fmt.Errorf("access denied").Error())
 			c.Abort()
 			return
 		}
@@ -57,7 +58,7 @@ func RequireRole(jwtSecret string, isIDRequired bool, requiredRoles []string) gi
 			reqUserID := c.Param("id_user")
 			if userID != reqUserID {
 				logger.Logger.Warnf("User ID mismatch: token user ID %v, request user ID %v", userID, reqUserID)
-				utils.HandleSuccess(c, http.StatusForbidden, "User ID mismatch.", nil)
+				utils.HandleError(c, http.StatusUnauthorized, "Unauthorized", fmt.Errorf("user ID mismatch").Error())
 				c.Abort()
 				return
 			}
