@@ -135,6 +135,18 @@ func (l *logger) connectRabbitMQ(config RabbitMQConfig) error {
 	if err != nil {
 		return fmt.Errorf("failed to declare exchange: %v", err)
 	}
+	err = ch.ExchangeDeclare(
+		statsExchangeName,
+		"fanout",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to declare exchange: %v", err)
+	}
 	l.rabbitmq = RabbitMQ{conn, ch}
 	return nil
 }
