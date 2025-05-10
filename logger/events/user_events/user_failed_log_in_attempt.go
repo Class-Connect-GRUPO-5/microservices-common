@@ -2,9 +2,30 @@ package user_events
 
 import "encoding/json"
 
+type AccountStatus int
+
+const (
+	AccountStatusRegistered AccountStatus = iota
+	AcocuntStatusVerified
+	AccountStatusNotExists
+)
+
+func (s AccountStatus) String() string {
+	switch s {
+	case AccountStatusRegistered:
+		return "not verified"
+	case AcocuntStatusVerified:
+		return "verified"
+	case AccountStatusNotExists:
+		return "not registered"
+	default:
+		return "invalid"
+	}
+}
+
 type UserFailedLogInAttempt struct {
 	Email  string `json:"email"`
-	Exists bool   `json:"exists"`
+	Status string `json:"exists"`
 }
 
 func (e UserFailedLogInAttempt) Type() string {
