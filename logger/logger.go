@@ -41,6 +41,25 @@ func (l LogLevel) String() string {
 	}
 }
 
+func LogLevelFromString(s string) (LogLevel, error) {
+	switch s {
+	case "debug":
+		return Debug, nil
+	case "info":
+		return Info, nil
+	case "warn":
+		return Warn, nil
+	case "error":
+		return Error, nil
+	case "fatal":
+		return Fatal, nil
+	case "panic":
+		return Panic, nil
+	default:
+		return -1, fmt.Errorf("invalid level")
+	}
+}
+
 type LoggerI interface {
 	SetLogLevel(logLevel LogLevel) error
 	Log(level LogLevel, msg string)
