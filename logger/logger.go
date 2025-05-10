@@ -98,6 +98,7 @@ func Url(c RabbitMQConfig) string {
 }
 
 type RabbitMQ struct {
+	name string
 	conn *amqp.Connection
 	ch   *amqp.Channel
 }
@@ -147,7 +148,7 @@ func (l *logger) connectRabbitMQ(config RabbitMQConfig) error {
 	if err != nil {
 		return fmt.Errorf("failed to declare exchange: %v", err)
 	}
-	l.rabbitmq = RabbitMQ{conn, ch}
+	l.rabbitmq = RabbitMQ{l.name, conn, ch}
 	return nil
 }
 
@@ -285,6 +286,7 @@ func (r *RabbitMQ) Send(exchange string, headers amqp.Table, body []byte) error 
 	if r.ch == nil {
 		return nil
 	}
+	headers["source"] = r.name
 	return r.ch.Publish(
 		exchange,
 		"",
