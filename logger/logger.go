@@ -238,6 +238,15 @@ func (l *logger) SetLogLevel(logLevel LogLevel) error {
 }
 
 func (l *logger) Log(level LogLevel, msg string) {
+	l.logrusLog(level, msg)
+
+	err := l.rabbitmq.Log(level, msg)
+	if err != nil {
+		l.logrusLog(Error, fmt.Sprintf("failed to emit event to rabbitMQ: %v", err))
+	}
+}
+
+func (l *logger) logrusLog(level LogLevel, msg string) {
 	if level >= l.level {
 		switch level {
 		case Info:
@@ -254,19 +263,17 @@ func (l *logger) Log(level LogLevel, msg string) {
 			l.logrus.Panic(msg)
 		}
 	}
-
-	l.rabbitmq.Log(level, msg)
 }
 
-func (r *RabbitMQ) Log(level LogLevel, msg string) {
-	r.Send(logExchangeName, amqp.Table{"level": level.String()}, []byte(msg))
+func (r *RabbitMQ) Log(level LogLevel, msg string) error {
+	return r.Send(logExchangeName, amqp.Table{"level": level.String()}, []byte(msg))
 }
 
-func (r *RabbitMQ) Send(exchange string, headers amqp.Table, body []byte) {
+func (r *RabbitMQ) Send(exchange string, headers amqp.Table, body []byte) error {
 	if r.ch == nil {
-		return
+		return nil
 	}
-	r.ch.Publish(
+	return r.ch.Publish(
 		exchange,
 		"",
 		false,

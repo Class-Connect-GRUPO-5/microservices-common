@@ -20,7 +20,7 @@ func (m errMapper[T]) Err(prefix string) (T, error) {
 
 func Wrapp(prefix string, err error) error {
 	if err != nil {
-		fmt.Errorf("%s: %v", prefix, err)
+		return fmt.Errorf("%s: %v", prefix, err)
 	}
 	return nil
 }
