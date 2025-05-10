@@ -151,18 +151,18 @@ func InitLogger(name string, logLevel LogLevel, output io.Writer) error {
 		name:   name,
 		logrus: logrus_instance,
 	}
-	err := l.connectRabbitMQ(RabbitMQConfig{
-		Host: "rabbitmq",
-		Port: 5672,
-	})
-	if err != nil {
-		return err
-	}
-	err = l.SetLogLevel(logLevel)
+	err := l.SetLogLevel(logLevel)
 	if err != nil {
 		return err
 	}
 	err = l.setOutput(output)
+	if err != nil {
+		return err
+	}
+	err = l.connectRabbitMQ(RabbitMQConfig{
+		Host: "rabbitmq",
+		Port: 5672,
+	})
 	if err != nil {
 		return err
 	}
@@ -261,6 +261,9 @@ func (r *RabbitMQ) Log(level LogLevel, msg string) {
 }
 
 func (r *RabbitMQ) Send(exchange string, headers amqp.Table, body []byte) {
+	if r.ch == nil {
+		return
+	}
 	r.ch.Publish(
 		exchange,
 		"",
