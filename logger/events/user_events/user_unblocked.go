@@ -1,4 +1,4 @@
-package metrics
+package user_events
 
 import "encoding/json"
 
