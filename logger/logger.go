@@ -260,14 +260,14 @@ func (r *RabbitMQ) Log(level LogLevel, msg string) {
 	r.Send(logExchangeName, amqp.Table{"level": level.String()}, []byte(msg))
 }
 
-func (r *RabbitMQ) Send(exchange string, newVar amqp.Table, body []byte) {
+func (r *RabbitMQ) Send(exchange string, headers amqp.Table, body []byte) {
 	r.ch.Publish(
 		exchange,
 		"",
 		false,
 		false,
 		amqp.Publishing{
-			Headers:     newVar,
+			Headers:     headers,
 			ContentType: "text/plain",
 			Body:        body,
 		},
@@ -327,11 +327,11 @@ func (l *logger) Panicf(format string, fields ...interface{}) {
 }
 
 func (l *logger) Emit(event events.Event) {
-	l.rabbitmq.newMethod(event)
+	l.rabbitmq.sendEvent(event)
 }
 
-func (r RabbitMQ) newMethod(event events.Event) {
-	b := encodeString(event.Type())
+func (r RabbitMQ) sendEvent(event events.Event) {
+	b := EncodeString(event.Type())
 	ba, err := event.Encode()
 	if err != nil {
 		panic(err)
@@ -340,14 +340,14 @@ func (r RabbitMQ) newMethod(event events.Event) {
 	r.Send(statsExchangeName, amqp.Table{}, b)
 }
 
-func encodeString(s string) []byte {
+func EncodeString(s string) []byte {
 	b := make([]byte, 0)
 	b = binary.BigEndian.AppendUint16(b, uint16(len(s)))
 	b = append(b, []byte(s)...)
 	return b
 }
 
-func decodeString(r io.Reader) string {
+func DecodeString(r io.Reader) string {
 	uintbuf := make([]byte, 2)
 	n, err := r.Read(uintbuf)
 	if err != nil {
