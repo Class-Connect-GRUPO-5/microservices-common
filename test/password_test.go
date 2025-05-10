@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	logger.InitLogger("password_test", logger.Error, os.Stdout)
+	logger.InitLogger("password_test", logger.Error, os.Stdout, true)
 }
 
 func TestHashPassword_Success(t *testing.T) {

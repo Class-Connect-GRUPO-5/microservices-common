@@ -14,7 +14,7 @@ import (
 )
 
 func init() {
-	logger.InitLogger("auth", logger.Error, os.Stdout)
+	logger.InitLogger("auth", logger.Error, os.Stdout, true)
 }
 
 func setupGin() *gin.Engine {

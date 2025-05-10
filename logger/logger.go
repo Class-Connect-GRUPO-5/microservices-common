@@ -139,7 +139,7 @@ func (l *logger) connectRabbitMQ(config RabbitMQConfig) error {
 	return nil
 }
 
-func InitLogger(name string, logLevel LogLevel, output io.Writer) error {
+func InitLogger(name string, logLevel LogLevel, output io.Writer, remote bool) error {
 	logrus_instance := logrus.New()
 
 	logrus_instance.SetFormatter(&logrus.TextFormatter{
@@ -159,12 +159,14 @@ func InitLogger(name string, logLevel LogLevel, output io.Writer) error {
 	if err != nil {
 		return err
 	}
-	err = l.connectRabbitMQ(RabbitMQConfig{
-		Host: "rabbitmq",
-		Port: 5672,
-	})
-	if err != nil {
-		return err
+	if remote {
+		err = l.connectRabbitMQ(RabbitMQConfig{
+			Host: "rabbitmq",
+			Port: 5672,
+		})
+		if err != nil {
+			return err
+		}
 	}
 	Logger = l
 	return nil
