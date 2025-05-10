@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"os"
 	"time"
 
 	"github.com/Class-Connect-GRUPO-5/microservices-common/logger/events"
@@ -121,7 +120,7 @@ func (l *logger) connectRabbitMQ(config RabbitMQConfig) error {
 	return nil
 }
 
-func InitLogger(name string, logLevel LogLevel, filePath ...string) error {
+func InitLogger(name string, logLevel LogLevel, output io.Writer) error {
 	logrus_instance := logrus.New()
 
 	logrus_instance.SetFormatter(&logrus.TextFormatter{
@@ -144,7 +143,7 @@ func InitLogger(name string, logLevel LogLevel, filePath ...string) error {
 	if err != nil {
 		return err
 	}
-	err = l.setOutput(filePath)
+	err = l.setOutput(output)
 	if err != nil {
 		return err
 	}
@@ -170,16 +169,16 @@ func InitLogger(name string, logLevel LogLevel, filePath ...string) error {
 //	if err != nil {
 //	    log.Fatalf("Failed to set logger output: %v", err)
 //	}
-func (l *logger) setOutput(filePath []string) error {
-	if len(filePath) > 0 {
-		file, err := os.OpenFile(filePath[0], os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-		if err != nil {
-			return fmt.Errorf("failed to open log file: %w", err)
-		}
-		l.logrus.SetOutput(io.MultiWriter(file, os.Stdout))
-	} else {
-		l.logrus.SetOutput(os.Stdout)
-	}
+func (l *logger) setOutput(output io.Writer) error {
+	// if len(filePath) > 0 {
+	// 	file, err := os.OpenFile(filePath[0], os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	// 	if err != nil {
+	// 		return fmt.Errorf("failed to open log file: %w", err)
+	// 	}
+	// 	l.logrus.SetOutput(io.MultiWriter(file, os.Stdout))
+	// } else {
+	l.logrus.SetOutput(output)
+	// }
 	return nil
 }
 

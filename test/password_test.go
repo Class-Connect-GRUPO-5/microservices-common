@@ -7,14 +7,11 @@ import (
 
 	"github.com/Class-Connect-GRUPO-5/microservices-common/logger"
 	"github.com/Class-Connect-GRUPO-5/microservices-common/utils"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
 func init() {
-	logger.Logger = logrus.New()
-	logger.Logger.SetOutput(os.Stdout)
-	logger.Logger.SetLevel(logrus.ErrorLevel)
+	logger.InitLogger("password_test", logger.Error, os.Stdout)
 }
 
 func TestHashPassword_Success(t *testing.T) {
