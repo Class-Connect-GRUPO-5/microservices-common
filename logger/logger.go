@@ -238,7 +238,7 @@ func (l *logger) SetLogLevel(logLevel LogLevel) error {
 }
 
 func (l *logger) Log(level LogLevel, msg string) {
-	if level > l.level {
+	if level >= l.level {
 		switch level {
 		case Info:
 			l.logrus.Info(msg)
