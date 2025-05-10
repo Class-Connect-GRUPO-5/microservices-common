@@ -12,9 +12,9 @@ func (e UserRegistered) Type() string {
 }
 
 func (e UserRegistered) Encode() ([]byte, error) {
-	return json.Marshal(e)
+	return Map(json.Marshal(e)).Err("error encoding UserRegistered")
 }
 
 func (e *UserRegistered) Decode(data []byte) error {
-	return json.Unmarshal(data, e)
+	return Wrapp("error encoding UserRegistered", json.Unmarshal(data, e))
 }

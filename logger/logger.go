@@ -336,13 +336,11 @@ func (l *logger) Emit(event events.Event) {
 }
 
 func (r RabbitMQ) sendEvent(event events.Event) {
-	b := EncodeString(event.Type())
-	ba, err := event.Encode()
+	b, err := event.Encode()
 	if err != nil {
 		panic(err)
 	}
-	b = append(b, ba...)
-	r.Send(statsExchangeName, amqp.Table{}, b)
+	r.Send(statsExchangeName, amqp.Table{"type": event.Type()}, b)
 }
 
 func EncodeString(s string) []byte {

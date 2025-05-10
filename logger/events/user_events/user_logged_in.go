@@ -11,9 +11,9 @@ func (e UserLoggedIn) Type() string {
 }
 
 func (e UserLoggedIn) Encode() ([]byte, error) {
-	return json.Marshal(e)
+	return Map(json.Marshal(e)).Err("error encoding UserLoggedIn")
 }
 
 func (e *UserLoggedIn) Decode(data []byte) error {
-	return json.Unmarshal(data, e)
+	return Wrapp("error encoding UserLoggedIn", json.Unmarshal(data, e))
 }

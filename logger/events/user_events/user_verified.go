@@ -12,9 +12,9 @@ func (e UserVerified) Type() string {
 }
 
 func (e UserVerified) Encode() ([]byte, error) {
-	return json.Marshal(e)
+	return Map(json.Marshal(e)).Err("error encoding UserVerified")
 }
 
 func (e *UserVerified) Decode(data []byte) error {
-	return json.Unmarshal(data, e)
+	return Wrapp("error encoding UserVerified", json.Unmarshal(data, e))
 }

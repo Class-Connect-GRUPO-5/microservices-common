@@ -11,9 +11,9 @@ func (e UserBlocked) Type() string {
 }
 
 func (e UserBlocked) Encode() ([]byte, error) {
-	return json.Marshal(e)
+	return Map(json.Marshal(e)).Err("error encoding UserBlocked")
 }
 
 func (e *UserBlocked) Decode(data []byte) error {
-	return json.Unmarshal(data, e)
+	return Wrapp("error encoding UserBlocked", json.Unmarshal(data, e))
 }
