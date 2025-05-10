@@ -102,8 +102,8 @@ type RabbitMQ struct {
 	ch   *amqp.Channel
 }
 
-const logExchangeName = "logs"
-const statsExchangeName = "stats"
+const LogExchangeName = "logs"
+const StatsExchangeName = "stats"
 
 func (l *logger) connectRabbitMQ(config RabbitMQConfig) error {
 	var conn *amqp.Connection
@@ -124,7 +124,7 @@ func (l *logger) connectRabbitMQ(config RabbitMQConfig) error {
 		return err
 	}
 	err = ch.ExchangeDeclare(
-		logExchangeName,
+		LogExchangeName,
 		"fanout",
 		false,
 		false,
@@ -136,7 +136,7 @@ func (l *logger) connectRabbitMQ(config RabbitMQConfig) error {
 		return fmt.Errorf("failed to declare exchange: %v", err)
 	}
 	err = ch.ExchangeDeclare(
-		statsExchangeName,
+		StatsExchangeName,
 		"fanout",
 		false,
 		false,
@@ -278,7 +278,7 @@ func (l *logger) logrusLog(level LogLevel, msg string) {
 }
 
 func (r *RabbitMQ) Log(level LogLevel, msg string) error {
-	return r.Send(logExchangeName, amqp.Table{"level": level.String()}, []byte(msg))
+	return r.Send(LogExchangeName, amqp.Table{"level": level.String()}, []byte(msg))
 }
 
 func (r *RabbitMQ) Send(exchange string, headers amqp.Table, body []byte) error {
@@ -359,7 +359,7 @@ func (r RabbitMQ) sendEvent(event events.Event) {
 	if err != nil {
 		panic(err)
 	}
-	r.Send(statsExchangeName, amqp.Table{"type": event.Type()}, b)
+	r.Send(StatsExchangeName, amqp.Table{"type": event.Type()}, b)
 }
 
 func EncodeString(s string) []byte {
