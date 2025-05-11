@@ -10,14 +10,11 @@ import (
 	"github.com/Class-Connect-GRUPO-5/microservices-common/middleware"
 	"github.com/Class-Connect-GRUPO-5/microservices-common/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
 func init() {
-	logger.Logger = logrus.New()
-	logger.Logger.SetOutput(os.Stdout)
-	logger.Logger.SetLevel(logrus.ErrorLevel)
+	logger.InitLogger("auth", logger.Error, os.Stdout, true)
 }
 
 func setupGin() *gin.Engine {
