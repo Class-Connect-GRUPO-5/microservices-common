@@ -55,3 +55,6 @@ func (s SuccessDetails) GetTitle() string { return s.Title }
 
 // GetInstance returns the instance URI.
 func (s SuccessDetails) GetInstance() string { return s.Instance }
+
+// GetData returns the data payload.
+func (s SuccessDetails) GetData() string { return s.Data }
