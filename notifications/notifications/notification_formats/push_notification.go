@@ -1,6 +1,6 @@
 package notification_formats
 
 type PushNotification struct {
-	Title string
-	Text  string
+	Title string `json:"title"`
+	Text  string `json:"text"`
 }
