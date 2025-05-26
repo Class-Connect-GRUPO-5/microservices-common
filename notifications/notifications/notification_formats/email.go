@@ -1,4 +1,4 @@
-package email_templates
+package notification_formats
 
 type Email struct {
 	Subject string

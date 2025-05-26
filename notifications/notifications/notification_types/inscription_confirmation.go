@@ -7,40 +7,41 @@ import (
 	"github.com/Class-Connect-GRUPO-5/microservices-common/notifications/notifications/notification_formats"
 )
 
-// WelcomeNotification represents a notification sent to users when they first join the platform.
-type WelcomeNotification struct {
-	Name string `json:"name"`
+// InscriptionConfirmationNotification represents a notification sent to users when they successfully enroll in a course.
+type InscriptionConfirmationNotification struct {
+	StudentName string `json:"student_name"`
+	CourseName  string `json:"course_name"`
 }
 
-func (n *WelcomeNotification) Type() string {
-	return "Welcome"
+func (n *InscriptionConfirmationNotification) Type() string {
+	return "InscriptionConfirmation"
 }
 
-func (n *WelcomeNotification) Encode() ([]byte, error) {
+func (n *InscriptionConfirmationNotification) Encode() ([]byte, error) {
 	return json.Marshal(n)
 }
 
-func (n *WelcomeNotification) Decode(data []byte) error {
+func (n *InscriptionConfirmationNotification) Decode(data []byte) error {
 	return json.Unmarshal(data, n)
 }
 
-func (n *WelcomeNotification) AsPush() (notification_formats.PushNotification, error) {
+func (n *InscriptionConfirmationNotification) AsPush() (notification_formats.PushNotification, error) {
 	return notification_formats.PushNotification{
-		Title: "Welcome to Class Connect",
-		Text:  "Hello " + n.Name + ", welcome to Class Connect!",
+		Title: "Course Enrollment Confirmed",
+		Text:  "You've successfully enrolled in " + n.CourseName,
 	}, nil
 }
 
-func (n *WelcomeNotification) AsEmail() (notification_formats.Email, error) {
+func (n *InscriptionConfirmationNotification) AsEmail() (notification_formats.Email, error) {
 	return notification_formats.Email{
-		Subject: "Welcome to ClassConnect!",
+		Subject: "Course Enrollment Confirmed: " + n.CourseName,
 		Body: fmt.Sprintf(`<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Welcome to ClassConnect</title>
+    <title>Course Enrollment Confirmed</title>
     <style>
         body {
             background-color: #f4f7fb;
@@ -60,7 +61,7 @@ func (n *WelcomeNotification) AsEmail() (notification_formats.Email, error) {
         }
 
         .header {
-            background: linear-gradient(90deg, #6366f1 0%%, #818cf8 100%%);
+            background: linear-gradient(90deg, #3b82f6 0%%, #60a5fa 100%%);
             color: white;
             text-align: center;
             padding: 36px 24px 20px 24px;
@@ -82,6 +83,26 @@ func (n *WelcomeNotification) AsEmail() (notification_formats.Email, error) {
             margin: 18px 0;
         }
 
+        .course-info {
+            background-color: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .course-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 12px;
+        }
+
+        .teacher-name {
+            font-weight: 600;
+            color: #6366f1;
+        }
+
         .footer {
             font-size: 13px;
             color: #8b95b6;
@@ -97,15 +118,20 @@ func (n *WelcomeNotification) AsEmail() (notification_formats.Email, error) {
 <body>
     <div class="container">
         <div class="header">
-            Welcome to ClassConnect!
+            🎓 Enrollment Confirmed
         </div>
         <div class="content">
             <p>Hi %s,</p>
-            <p>We're thrilled to welcome you to <b>ClassConnect</b>! Your account is ready, and your learning journey
-                begins now.</p>
-            <p>Explore your dashboard, connect with classmates, and join your first class. If you need help, just reply
-                to this email or visit our Help Center.</p>
-            <p>Happy learning!<br /><span style="color:#6366f1;font-weight:500;">The ClassConnect Team</span></p>
+            
+            <p>Great news! You've successfully enrolled in:</p>
+            
+            <div class="course-info">
+                <div class="course-name">%s</div>
+            </div>
+            
+            <p>You can now access course materials, assignments, and join class discussions. Check your dashboard to get started!</p>
+            
+            <p>Best of luck with your studies!<br /><span style="color:#3b82f6;font-weight:500;">The ClassConnect Team</span></p>
         </div>
         <div class="footer">
             &copy; 2025 ClassConnect. All rights reserved.
@@ -113,6 +139,6 @@ func (n *WelcomeNotification) AsEmail() (notification_formats.Email, error) {
     </div>
 </body>
 
-</html>`, n.Name),
+</html>`, n.StudentName, n.CourseName),
 	}, nil
 }
