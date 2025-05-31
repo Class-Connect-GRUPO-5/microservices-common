@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Class-Connect-GRUPO-5/microservices-common/rabbitmq"
+	"github.com/rabbitmq/amqp091-go"
 )
 
 const NotificationsExchangeName = "notifications"
@@ -14,11 +15,15 @@ type notificationClient struct {
 
 var client *notificationClient
 
-func Send() error {
+func Send(notification Notification) error {
 	if client == nil {
 		return fmt.Errorf("client not initialized")
 	}
-	return nil
+	body, err := notification.Encode()
+	if err != nil {
+		return fmt.Errorf("error encoding notification: %s", err)
+	}
+	return client.rabbitmqClient.Send(NotificationsExchangeName, amqp091.Table{"type": notification.Type()}, body)
 }
 
 type Config struct {

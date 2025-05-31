@@ -1,7 +1,7 @@
-package notification
+package notifications
 
 import (
-	"github.com/Class-Connect-GRUPO-5/microservices-common/notifications/notifications/notification_formats"
+	"github.com/Class-Connect-GRUPO-5/microservices-common/notifications/notification_formats"
 )
 
 type Notification interface {
