@@ -6,6 +6,8 @@ import (
 	"github.com/Class-Connect-GRUPO-5/microservices-common/rabbitmq"
 )
 
+const NotificationsExchangeName = "notifications"
+
 type notificationClient struct {
 	rabbitmqClient rabbitmq.Client
 }
@@ -25,7 +27,7 @@ type Config struct {
 }
 
 func Init(config Config) error {
-	rabbitmqClient, err := rabbitmq.NewClient(config.ServiceName, config.Rabbitmq, []string{"notifications"})
+	rabbitmqClient, err := rabbitmq.NewClient(config.ServiceName, config.Rabbitmq, []string{NotificationsExchangeName})
 	if err != nil {
 		return fmt.Errorf("error connecting to rabbitmq: %s", err)
 	}
