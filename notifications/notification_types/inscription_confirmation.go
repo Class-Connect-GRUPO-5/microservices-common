@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Class-Connect-GRUPO-5/microservices-common/notifications/notifications/notification_formats"
+	"github.com/Class-Connect-GRUPO-5/microservices-common/notifications/notification_formats"
 )
 
 // InscriptionConfirmationNotification represents a notification sent to users when they successfully enroll in a course.
