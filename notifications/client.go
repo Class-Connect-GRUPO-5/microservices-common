@@ -15,7 +15,7 @@ type notificationClient struct {
 
 var client *notificationClient
 
-func Send(notification Notification) error {
+func Send(userId string, notification Notification) error {
 	if client == nil {
 		return fmt.Errorf("client not initialized")
 	}
@@ -23,7 +23,7 @@ func Send(notification Notification) error {
 	if err != nil {
 		return fmt.Errorf("error encoding notification: %s", err)
 	}
-	return client.rabbitmqClient.Send(NotificationsExchangeName, amqp091.Table{"type": notification.Type()}, body)
+	return client.rabbitmqClient.Send(NotificationsExchangeName, amqp091.Table{"type": notification.Type(), "user": userId}, body)
 }
 
 type Config struct {
