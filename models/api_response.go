@@ -7,4 +7,5 @@ type APIResponse interface {
 	GetType() string
 	GetTitle() string
 	GetInstance() string
+	GetData() string
 }

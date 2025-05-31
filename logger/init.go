@@ -13,7 +13,7 @@ func InitLogger(name string, logLevel LogLevel, output io.Writer, remote bool) e
 	logrus_instance.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp: true,
 	})
-	logrus_instance.SetReportCaller(true)
+	logrus_instance.SetReportCaller(false)
 
 	l := &logger{
 		name:   name,

@@ -49,6 +49,7 @@ func (l *logger) connectRabbitMQ(config rabbitmq.Config) error {
 	l.rabbitmq = c
 	return nil
 }
+
 func (l *logger) Log(level LogLevel, msg string) {
 	l.logrusLog(level, msg)
 
