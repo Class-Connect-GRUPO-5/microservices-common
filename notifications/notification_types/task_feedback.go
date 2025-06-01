@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Class-Connect-GRUPO-5/microservices-common/notifications/notifications/notification_formats"
+	"github.com/Class-Connect-GRUPO-5/microservices-common/notifications/notification_formats"
 )
 
 // TaskFeedbackNotification represents a notification sent to students when they receive feedback on their task.

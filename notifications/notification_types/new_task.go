@@ -4,44 +4,46 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Class-Connect-GRUPO-5/microservices-common/notifications/notifications/notification_formats"
+	"github.com/Class-Connect-GRUPO-5/microservices-common/notifications/notification_formats"
 )
 
-// InscriptionConfirmationNotification represents a notification sent to users when they successfully enroll in a course.
-type InscriptionConfirmationNotification struct {
-	StudentName string `json:"student_name"`
+// NewTaskNotification represents a notification sent to users when a new task is assigned in a course.
+type NewTaskNotification struct {
 	CourseName  string `json:"course_name"`
+	Title       string `json:"heading"`
+	Description string `json:"description"`
+	DueDate     string `json:"due_date"`
 }
 
-func (n *InscriptionConfirmationNotification) Type() string {
-	return "InscriptionConfirmation"
+func (n *NewTaskNotification) Type() string {
+	return "NewTask"
 }
 
-func (n *InscriptionConfirmationNotification) Encode() ([]byte, error) {
+func (n *NewTaskNotification) Encode() ([]byte, error) {
 	return json.Marshal(n)
 }
 
-func (n *InscriptionConfirmationNotification) Decode(data []byte) error {
+func (n *NewTaskNotification) Decode(data []byte) error {
 	return json.Unmarshal(data, n)
 }
 
-func (n *InscriptionConfirmationNotification) AsPush() (notification_formats.PushNotification, error) {
+func (n *NewTaskNotification) AsPush() (notification_formats.PushNotification, error) {
 	return notification_formats.PushNotification{
-		Title: "Course Enrollment Confirmed",
-		Text:  "You've successfully enrolled in " + n.CourseName,
+		Title: "New Task in " + n.CourseName,
+		Text:  n.Title,
 	}, nil
 }
 
-func (n *InscriptionConfirmationNotification) AsEmail() (notification_formats.Email, error) {
+func (n *NewTaskNotification) AsEmail() (notification_formats.Email, error) {
 	return notification_formats.Email{
-		Subject: "Course Enrollment Confirmed: " + n.CourseName,
+		Subject: "New Task: " + n.Title + " - " + n.CourseName,
 		Body: fmt.Sprintf(`<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Course Enrollment Confirmed</title>
+    <title>New Task Assigned</title>
     <style>
         body {
             background-color: #f4f7fb;
@@ -61,7 +63,7 @@ func (n *InscriptionConfirmationNotification) AsEmail() (notification_formats.Em
         }
 
         .header {
-            background: linear-gradient(90deg, #3b82f6 0%%, #60a5fa 100%%);
+            background: linear-gradient(90deg, #059669 0%%, #10b981 100%%);
             color: white;
             text-align: center;
             padding: 36px 24px 20px 24px;
@@ -83,22 +85,29 @@ func (n *InscriptionConfirmationNotification) AsEmail() (notification_formats.Em
             margin: 18px 0;
         }
 
-        .course-info {
-            background-color: #eff6ff;
-            border-left: 4px solid #3b82f6;
+        .task-info {
+            background-color: #f0fdf4;
+            border-left: 4px solid #10b981;
             padding: 20px;
             margin: 20px 0;
             border-radius: 8px;
         }
 
-        .course-name {
+        .task-title {
             font-size: 20px;
             font-weight: 600;
-            color: #1e40af;
+            color: #059669;
             margin-bottom: 12px;
         }
 
-        .teacher-name {
+        .due-date {
+            font-size: 14px;
+            color: #dc2626;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .course-name {
             font-weight: 600;
             color: #6366f1;
         }
@@ -118,20 +127,20 @@ func (n *InscriptionConfirmationNotification) AsEmail() (notification_formats.Em
 <body>
     <div class="container">
         <div class="header">
-            🎓 Enrollment Confirmed
+            📝 New Task Assigned
         </div>
         <div class="content">
-            <p>Hi %s,</p>
+            <p>You have a new task in <span class="course-name">%s</span>!</p>
             
-            <p>Great news! You've successfully enrolled in:</p>
-            
-            <div class="course-info">
-                <div class="course-name">%s</div>
+            <div class="task-info">
+                <div class="task-title">%s</div>
+                <p>%s</p>
+                <div class="due-date">📅 Due: %s</div>
             </div>
             
-            <p>You can now access course materials, assignments, and join class discussions. Check your dashboard to get started!</p>
+            <p>Head over to your dashboard to get started on this task. Don't forget to check the due date and requirements!</p>
             
-            <p>Best of luck with your studies!<br /><span style="color:#3b82f6;font-weight:500;">The ClassConnect Team</span></p>
+            <p>Good luck with your studies!<br /><span style="color:#059669;font-weight:500;">The ClassConnect Team</span></p>
         </div>
         <div class="footer">
             &copy; 2025 ClassConnect. All rights reserved.
@@ -139,6 +148,6 @@ func (n *InscriptionConfirmationNotification) AsEmail() (notification_formats.Em
     </div>
 </body>
 
-</html>`, n.StudentName, n.CourseName),
+</html>`, n.CourseName, n.Title, n.Description, n.DueDate),
 	}, nil
 }

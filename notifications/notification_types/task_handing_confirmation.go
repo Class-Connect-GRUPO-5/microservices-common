@@ -4,47 +4,47 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Class-Connect-GRUPO-5/microservices-common/notifications/notifications/notification_formats"
+	"github.com/Class-Connect-GRUPO-5/microservices-common/notifications/notification_formats"
 )
 
-// NewAnswerNotification represents a notification sent to teachers when a student submits an answer.
-type NewAnswerNotification struct {
-	TeacherName string `json:"teacher_name"`
-	StudentName string `json:"student_name"`
-	TaskTitle   string `json:"task_title"`
-	CourseName  string `json:"course_name"`
-	SubmittedAt string `json:"submitted_at"`
+// TaskHandingConfirmationNotification represents a notification sent to students when they submit a task.
+type TaskHandingConfirmationNotification struct {
+	StudentName  string `json:"student_name"`
+	TaskTitle    string `json:"task_title"`
+	CourseName   string `json:"course_name"`
+	SubmittedAt  string `json:"submitted_at"`
+	SolutionText string `json:"solution_text"`
 }
 
-func (n *NewAnswerNotification) Type() string {
-	return "NewAnswer"
+func (n *TaskHandingConfirmationNotification) Type() string {
+	return "TaskHandingConfirmation"
 }
 
-func (n *NewAnswerNotification) Encode() ([]byte, error) {
+func (n *TaskHandingConfirmationNotification) Encode() ([]byte, error) {
 	return json.Marshal(n)
 }
 
-func (n *NewAnswerNotification) Decode(data []byte) error {
+func (n *TaskHandingConfirmationNotification) Decode(data []byte) error {
 	return json.Unmarshal(data, n)
 }
 
-func (n *NewAnswerNotification) AsPush() (notification_formats.PushNotification, error) {
+func (n *TaskHandingConfirmationNotification) AsPush() (notification_formats.PushNotification, error) {
 	return notification_formats.PushNotification{
-		Title: "New Student Submission",
-		Text:  n.StudentName + " submitted " + n.TaskTitle,
+		Title: "Task Submitted Successfully",
+		Text:  "Your submission for " + n.TaskTitle + " has been received",
 	}, nil
 }
 
-func (n *NewAnswerNotification) AsEmail() (notification_formats.Email, error) {
+func (n *TaskHandingConfirmationNotification) AsEmail() (notification_formats.Email, error) {
 	return notification_formats.Email{
-		Subject: "New Submission: " + n.TaskTitle + " by " + n.StudentName,
+		Subject: "Task Submission Confirmed: " + n.TaskTitle,
 		Body: fmt.Sprintf(`<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Student Submission</title>
+    <title>Task Submission Confirmed</title>
     <style>
         body {
             background-color: #f4f7fb;
@@ -64,7 +64,7 @@ func (n *NewAnswerNotification) AsEmail() (notification_formats.Email, error) {
         }
 
         .header {
-            background: linear-gradient(90deg, #f59e0b 0%%, #fbbf24 100%%);
+            background: linear-gradient(90deg, #10b981 0%%, #34d399 100%%);
             color: white;
             text-align: center;
             padding: 36px 24px 20px 24px;
@@ -87,8 +87,8 @@ func (n *NewAnswerNotification) AsEmail() (notification_formats.Email, error) {
         }
 
         .submission-info {
-            background-color: #fffbeb;
-            border-left: 4px solid #f59e0b;
+            background-color: #ecfdf5;
+            border-left: 4px solid #10b981;
             padding: 20px;
             margin: 20px 0;
             border-radius: 8px;
@@ -97,24 +97,31 @@ func (n *NewAnswerNotification) AsEmail() (notification_formats.Email, error) {
         .task-title {
             font-size: 20px;
             font-weight: 600;
-            color: #d97706;
+            color: #059669;
             margin-bottom: 12px;
-        }
-
-        .student-name {
-            font-weight: 600;
-            color: #6366f1;
         }
 
         .course-name {
             font-weight: 600;
-            color: #059669;
+            color: #6366f1;
         }
 
         .submitted-time {
             font-size: 14px;
             color: #6b7280;
             margin-top: 12px;
+        }
+
+        .solution-text {
+            background-color: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            margin-top: 12px;
+            font-family: 'Courier New', monospace;
+            color: #374151;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
         .footer {
@@ -132,23 +139,23 @@ func (n *NewAnswerNotification) AsEmail() (notification_formats.Email, error) {
 <body>
     <div class="container">
         <div class="header">
-            📋 New Submission
+            ✅ Submission Confirmed
         </div>
         <div class="content">
             <p>Hi %s,</p>
             
-            <p>You have a new submission to review!</p>
+            <p>Your task submission has been successfully received!</p>
             
             <div class="submission-info">
                 <div class="task-title">%s</div>
-                <p>Student: <span class="student-name">%s</span></p>
                 <p>Course: <span class="course-name">%s</span></p>
                 <div class="submitted-time">⏰ Submitted: %s</div>
+                <div class="solution-text">%s</div>
             </div>
             
-            <p>You can review the submission and provide feedback through your instructor dashboard.</p>
+            <p>Your instructor will review your submission and provide feedback. You can check for updates in your dashboard.</p>
             
-            <p>Happy teaching!<br /><span style="color:#f59e0b;font-weight:500;">The ClassConnect Team</span></p>
+            <p>Great work!<br /><span style="color:#10b981;font-weight:500;">The ClassConnect Team</span></p>
         </div>
         <div class="footer">
             &copy; 2025 ClassConnect. All rights reserved.
@@ -156,6 +163,6 @@ func (n *NewAnswerNotification) AsEmail() (notification_formats.Email, error) {
     </div>
 </body>
 
-</html>`, n.TeacherName, n.TaskTitle, n.StudentName, n.CourseName, n.SubmittedAt),
+</html>`, n.StudentName, n.TaskTitle, n.CourseName, n.SubmittedAt, n.SolutionText),
 	}, nil
 }
