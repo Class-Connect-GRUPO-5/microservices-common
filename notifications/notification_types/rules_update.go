@@ -7,8 +7,7 @@ import (
 	"github.com/Class-Connect-GRUPO-5/microservices-common/notifications/notification_formats"
 )
 
-// RulesUpdateNotification representa una notificación para informar a los usuarios
-// que los términos y condiciones de la aplicación han cambiado.
+// RulesUpdateNotification represents a notification sent to users when the application's terms and conditions have been updated.
 type RulesUpdateNotification struct {
 	Name      string `json:"name"`
 	UpdatedAt string `json:"updated_at"`
@@ -28,21 +27,21 @@ func (n *RulesUpdateNotification) Decode(data []byte) error {
 
 func (n *RulesUpdateNotification) AsPush() (notification_formats.PushNotification, error) {
 	return notification_formats.PushNotification{
-		Title: "Actualización de Términos y Condiciones",
-		Text:  fmt.Sprintf("Hola %s, nuestros términos y condiciones han sido actualizados (%s). Haz clic para revisarlos.", n.Name, n.UpdatedAt),
+		Title: "Terms and Conditions Updated",
+		Text:  fmt.Sprintf("Hi %s, our terms and conditions have been updated (%s).", n.Name, n.UpdatedAt),
 	}, nil
 }
 
 func (n *RulesUpdateNotification) AsEmail() (notification_formats.Email, error) {
 	return notification_formats.Email{
-		Subject: "Hemos actualizado nuestros Términos y Condiciones",
+		Subject: "We've Updated Our Terms and Conditions",
 		Body: fmt.Sprintf(`<!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Actualización de Términos y Condiciones</title>
+    <title>Terms and Conditions Update</title>
     <style>
         body {
             background-color: #f4f7fb;
@@ -110,20 +109,21 @@ func (n *RulesUpdateNotification) AsEmail() (notification_formats.Email, error) 
 <body>
     <div class="container">
         <div class="header">
-            Actualización de Términos y Condiciones
+            📋 Terms and Conditions Update
         </div>
         <div class="content">
-            <p>Hola %s,</p>
-            <p>Te informamos que nuestros <b>Términos y Condiciones</b> han sido actualizados en la fecha: <strong>%s</strong>.</p>
-            <p>Es importante que revises los cambios para estar al tanto de tus derechos y responsabilidades. Haz clic en el botón de abajo para ver la versión completa actualizada.</p>
-            <p style="text-align:center;">
-                <a href="https://tuapp.com/terminos-y-condiciones" class="btn">Ver Términos y Condiciones</a>
-            </p>
-            <p>Si tienes preguntas o necesitas más información, no dudes en responder a este correo o visitar nuestro Centro de Ayuda.</p>
-            <p>Gracias por confiar en nosotros.<br /><span style="color:#6366f1;font-weight:500;">El equipo de TuApp</span></p>
+            <p>Hi %s,</p>
+            
+            <p>We want to inform you that our <b>Terms and Conditions</b> have been updated on: <strong>%s</strong>.</p>
+            
+            <p>It's important that you review the changes to stay informed about your rights and responsibilities. You can check the new terms in the ClassConnect app.</p>
+            
+            <p>If you have any questions or need more information, don't hesitate to reply to this email or visit our Help Center.</p>
+            
+            <p>Thank you for trusting us.<br /><span style="color:#6366f1;font-weight:500;">The ClassConnect Team</span></p>
         </div>
         <div class="footer">
-            &copy; 2025 TuApp. Todos los derechos reservados.
+            &copy; 2025 ClassConnect. All rights reserved.
         </div>
     </div>
 </body>
