@@ -27,6 +27,7 @@ func DecodeNotification(notificationType string, body []byte) (Notification, err
 		&notification_types.NewAnswerNotification{},
 		&notification_types.NewForumCommentNotification{},
 		&notification_types.RulesUpdateNotification{},
+		&notification_types.PlagiarismDetected{},
 	}
 	for _, notificationTypeInstance := range notificationTypes {
 		if notificationTypeInstance.Type() == notificationType {
